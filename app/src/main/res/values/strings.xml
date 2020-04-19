@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">camaps</string>
     <string name="title_activity_maps">Map</string>
+    <string name="introTitle">어디야?</string>
 </resources>
