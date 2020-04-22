@@ -22,6 +22,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Objects;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -49,7 +51,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        Objects.requireNonNull(mapFragment).getMapAsync(this);
     }
 
     @Override
@@ -60,7 +62,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (checkLocationServicesStatus()) {
                 Log.d("@@@", "onActivityResult: GPS 활성화 됨");
                 checkRunTimePermission();
-                return ;
             }
         }
     }
@@ -84,12 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 
-            if ( check_result ) {
-
-                //위치 값을 가져올 수 있음
-                ;
-            }
-            else {
+            if ( !check_result ) {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 
                 if (shouldShowRequestPermissionRationale(REQUIRED_PERMISSIONS[0])
@@ -135,8 +131,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean checkLocationServicesStatus() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        return Objects.requireNonNull(locationManager).isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || Objects.requireNonNull(locationManager).isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
 
@@ -156,8 +152,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //LatLng cityHall = new LatLng(36.815226, 127.113886);
         LatLng cityHall = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
 
-        mMap.addMarker(new MarkerOptions().position(cityHall).title("천안시청"));
+        //mMap.addMarker(new MarkerOptions().position(cityHall).title("천안시청"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cityHall,15));
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
     void checkRunTimePermission() {
@@ -166,10 +164,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(MapsActivity.this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
-
-        } else {
+        if (hasFineLocationPermission == PackageManager.PERMISSION_DENIED ||
+                hasCoarseLocationPermission == PackageManager.PERMISSION_DENIED)
+        {
             if (shouldShowRequestPermissionRationale(REQUIRED_PERMISSIONS[0])) {
                 Toast.makeText(MapsActivity.this, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
                 requestPermissions(REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
