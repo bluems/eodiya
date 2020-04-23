@@ -6,13 +6,17 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,7 +24,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.Text;
 
 import java.util.Objects;
 
@@ -151,8 +158,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //LatLng cityHall = new LatLng(36.815226, 127.113886);
         LatLng cityHall = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
 
-        //mMap.addMarker(new MarkerOptions().position(cityHall).title("천안시청"));
+            @Override
+            public View getInfoContents(Marker marker) {
+                @SuppressLint("InflateParams") View v = getLayoutInflater().inflate(R.layout.activity_marker, null);
+                TextView infoTitle = v.findViewById(R.id.infoTitle);
+                TextView info = v.findViewById(R.id.info);
+                infoTitle.setText(marker.getTitle());
+                infoTitle.setPaintFlags(infoTitle.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+                info.setText("1 \n 2\n3\n4");
+
+                return v;
+            }
+        });
+        mMap.addMarker(new MarkerOptions().position(cityHall).title("천안시청").snippet("1 \n 2"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cityHall,15));
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
