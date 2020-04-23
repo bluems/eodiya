@@ -171,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 TextView info = v.findViewById(R.id.info);
                 infoTitle.setText(marker.getTitle());
                 infoTitle.setPaintFlags(infoTitle.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
-                info.setText("1 \n 2\n3\n4");
+                info.setText(marker.getSnippet());
 
                 return v;
             }
