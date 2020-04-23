@@ -2,4 +2,7 @@
     <string name="app_name">camaps</string>
     <string name="title_activity_maps">Map</string>
     <string name="introTitle">어디야?</string>
+    <string name="id">아이디</string>
+    <string name="password">패스워드</string>
+    <string name="loginButton">로그인</string>
 </resources>

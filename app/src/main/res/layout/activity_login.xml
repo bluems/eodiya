@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/field_id"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:hint="@string/id"
+            android:text=""
+            android:textAlignment="center"
+            android:inputType="text"
+            android:importantForAutofill="no"
+            tools:targetApi="O" />
+
+        <EditText
+            android:id="@+id/field_pw"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:text=""
+            android:textAlignment="center"
+            android:inputType="textPassword"
+            android:importantForAutofill="no"
+            tools:targetApi="O" />
+
+        <Button
+            android:id="@+id/loginBtn"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/loginButton" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
