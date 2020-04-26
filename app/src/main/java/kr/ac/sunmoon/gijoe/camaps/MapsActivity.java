@@ -2,6 +2,7 @@ package kr.ac.sunmoon.gijoe.camaps;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -14,6 +15,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -143,7 +145,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return v;
             }
         });
-        mMap.addMarker(new MarkerOptions().position(cityHall).title("천안시청").snippet("1 \n 2"));
+        //mMap.addMarker(new MarkerOptions().position(cityHall).title("천안시청").snippet("1 \n 2"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cityHall,15));
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
