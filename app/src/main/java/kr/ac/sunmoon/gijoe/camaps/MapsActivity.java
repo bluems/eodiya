@@ -46,6 +46,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private GpsTracker gpsTracker;
+    private ArrayList<PublicData> arrayList;
 
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
@@ -69,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         Objects.requireNonNull(mapFragment).getMapAsync(this);
 
-        ArrayList<PublicData> arrayList = xml_parse(R.raw.cheonan);
+        arrayList = xml_parse(R.raw.cheonan);
         Log.d("MapsActivity", "onCreate: Array Size: " + arrayList.size());
     }
 
