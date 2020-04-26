@@ -309,4 +309,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return publicDataList;
     }
+
+    private double calcDistance(double origin_lat, double origin_lng, double diff_lat, double diff_lng) {
+        double theta = origin_lng - diff_lng;
+        double dist = Math.sin(deg2rad(origin_lat)) * Math.sin(deg2rad(diff_lat)) + Math.cos(deg2rad(origin_lat)) * Math.cos(deg2rad(diff_lat)) * Math.cos(deg2rad(theta));
+
+        dist = rad2deg(Math.acos(dist));
+        dist = dist * 60 * 1.1515;
+
+        return (dist * 1609.344);
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
 }
