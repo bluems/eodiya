@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -122,6 +123,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -150,6 +152,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cityHall,15));
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        if (arrayList != null) {
+            Iterator<PublicData> iterator = arrayList.iterator();
+            PublicData data;
+            while(iterator.hasNext()) {
+                data = iterator.next();
+                double dist = calcDistance(gpsTracker.getLatitude(), gpsTracker.getLongitude(), data.getLatitude(), data.getLongitude());
+                Log.d("Iterator", String.format("onMapReady: 개방장소명: %s, %f M", data.getPlace(), dist));
+
+                LatLng item_position = new LatLng(data.getLatitude(), data.getLongitude());
+                String description = data.getTel() + "\n평일: " + data.getWeekday() + "\n주말: " + data.getWeekend();
+                mMap.addMarker(new MarkerOptions().position(item_position).title(data.getPlace()).snippet(description));
+            }
+        }
+
     }
 
     //권한 설정 연결
