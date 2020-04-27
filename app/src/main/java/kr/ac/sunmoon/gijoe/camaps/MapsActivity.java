@@ -148,7 +148,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return v;
             }
         });
-        //mMap.addMarker(new MarkerOptions().position(cityHall).title("천안시청").snippet("1 \n 2"));
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(MapsActivity.this, DetailActivity.class);
+
+                intent.putExtra("gps",marker.getPosition());
+                intent.putExtra("name", marker.getTitle());
+                intent.putExtra("publicData", arrayList);
+
+                startActivity(intent);
+            }
+        });
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cityHall,15));
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
