@@ -1,6 +1,8 @@
 package kr.ac.sunmoon.gijoe.camaps;
 
-class PublicData {
+import java.io.Serializable;
+
+class PublicData implements Serializable {
     private String place;       //개방장소명
     private String facility;    //개방시설명
     private String closed;      //휴관일
