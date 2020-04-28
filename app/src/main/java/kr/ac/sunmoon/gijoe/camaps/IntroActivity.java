@@ -22,7 +22,7 @@ public class IntroActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
-                Intent intent = new Intent(IntroActivity.this, MapsActivity.class);
+                Intent intent = new Intent(IntroActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         }
