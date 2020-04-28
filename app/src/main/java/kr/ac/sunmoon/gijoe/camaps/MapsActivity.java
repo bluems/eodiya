@@ -175,7 +175,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 LatLng item_position = new LatLng(data.getLatitude(), data.getLongitude());
                 String description = data.getTel() + "\n평일: " + data.getWeekday() + "\n주말: " + data.getWeekend();
-                mMap.addMarker(new MarkerOptions().position(item_position).title(data.getPlace()).snippet(description));
+                mMap.addMarker(new MarkerOptions().position(item_position).title(data.getFacility()).snippet(description));
             }
         }
 

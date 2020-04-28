@@ -45,7 +45,10 @@ public class DetailMapActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(gps).title(name);
+        LatLng gps = new LatLng(data.getLatitude(), data.getLongitude());
+        markerOptions.position(gps).title(data.getFacility());
+
+        googleMap.getUiSettings().setAllGesturesEnabled(false);
 
         googleMap.addMarker(markerOptions);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gps, 15));
