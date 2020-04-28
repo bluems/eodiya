@@ -153,9 +153,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(MapsActivity.this, DetailMapActivity.class);
 
-                intent.putExtra("gps",marker.getPosition());
-                intent.putExtra("name", marker.getTitle());
-                intent.putExtra("publicData", arrayList);
+                PublicData data = find_xml_data(marker.getTitle());
+
+                intent.putExtra("publicData", data);
 
                 startActivity(intent);
             }
@@ -339,6 +339,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return publicDataList;
     }
 
+    private PublicData find_xml_data(String title) {
+        for (PublicData data: arrayList) {
+            if (data.getFacility().equals(title)) return data;
+        }
+
+        return null;
+    }
     private double calcDistance(double origin_lat, double origin_lng, double diff_lat, double diff_lng) {
         double theta = origin_lng - diff_lng;
         double dist = Math.sin(deg2rad(origin_lat)) * Math.sin(deg2rad(diff_lat)) + Math.cos(deg2rad(origin_lat)) * Math.cos(deg2rad(diff_lat)) * Math.cos(deg2rad(theta));
