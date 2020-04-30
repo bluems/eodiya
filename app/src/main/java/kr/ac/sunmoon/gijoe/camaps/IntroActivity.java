@@ -1,5 +1,6 @@
 package kr.ac.sunmoon.gijoe.camaps;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -18,15 +19,17 @@ public class IntroActivity extends AppCompatActivity {
         introThread.start();
     }
 
-    Handler handler = new Handler() {
+    Handler handler = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) {
+        public boolean handleMessage(@NonNull Message msg) {
             if (msg.what == 1) {
                 Intent intent = new Intent(IntroActivity.this, LoginActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
+
+            return true;
         }
-    };
+    });
 }
