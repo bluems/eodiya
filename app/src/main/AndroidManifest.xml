@@ -36,7 +36,8 @@
 
         <activity android:name=".LoginActivity" />
         <activity android:name=".Marker" />
-        <activity android:name=".IntroActivity">
+        <activity android:name=".IntroActivity"
+            android:theme="@style/AppTheme.Intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
