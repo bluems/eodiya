@@ -124,7 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LatLng cityHall = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+        LatLng MyPoint = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker marker) {
@@ -156,7 +156,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cityHall,15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MyPoint,15));
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
