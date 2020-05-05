@@ -39,6 +39,7 @@ public class GpsTracker extends Service implements LocationListener {
             boolean isGPSEnabled = false;
             boolean isNetworkEnabled = false;
 
+            // 각각 GPS, 네트워크 위치 수신 가능 여부 확인
             if (locationManager != null) {
                 isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
                 isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -50,11 +51,15 @@ public class GpsTracker extends Service implements LocationListener {
                 int hasFineLocationPermission = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION);
                 int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION);
 
+                // 어느 장치로 위치 확인이 가능한지 확인.
                 if (hasFineLocationPermission == PackageManager.PERMISSION_DENIED ||
                     hasCoarseLocationPermission == PackageManager.PERMISSION_DENIED) {
                     return null ;
                 }
 
+                // GPS가 정상 수신 가능한데 네트워크 위치도 같이 받으면 문제가 있다.
+                // 따라서 GPS 수신 가능 시 더 정확한 GPS 신호만 받고,
+                // 실내 등 수신불가 지역 진입 또는 GPS 비활성화 시 네트워크 위치를 받는다.
                 if (isNetworkEnabled && !isGPSEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
@@ -132,6 +137,7 @@ public class GpsTracker extends Service implements LocationListener {
 
     }
 
+    // 만들어두긴 했는데.. 쓸일이 없다..?
     public void stopUsingGPS() {
         if (locationManager != null) {
             locationManager.removeUpdates(GpsTracker.this);

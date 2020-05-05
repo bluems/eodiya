@@ -40,6 +40,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     protected void login(String id, String pw) {
+        // 앱 테스트를 위한 기본 비밀번호 하드코딩.
+        // 서버 연동 시 제거될 예정
         if (id.equals("test") && pw.equals("1234")) loginSuccessed();
     }
 

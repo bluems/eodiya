@@ -58,19 +58,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        // 필요 권한이 부여되었는지 확인.
+        // 권한 확인 과정에서 앱이 먼저 종료되는 버그가 있다.
+        // 권한 부여 후 다시 실행하면 문제 없지만 확인 필요함.
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
         }else {
             checkRunTimePermission();
         }
 
+        //GPS 수신 쓰레드 연결
         gpsTracker = new GpsTracker(MapsActivity.this);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // 구글 지도 및 콜백 연결
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         Objects.requireNonNull(mapFragment).getMapAsync(this);
 
+        // 테스트를 위해 내장된 xml 연결
         arrayList = xml_parse(R.raw.cheonan);
         Log.d("MapsActivity", "onCreate: Array Size: " + arrayList.size());
     }
@@ -114,22 +119,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        //LatLng cityHall = new LatLng(36.815226, 127.113886);
-        LatLng cityHall = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+        // GPS Tracker로부터 수신
+        LatLng MyPoint = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+
+        // 마커 클릭 시 나오는 InfoWindows 연결
+        // 안드로이드 기본 윈도우로는 줄내림 처리등의 미흡함이 있다.
+        // 따라서 해당 처리가 되어 있는 별도 레이아웃을 연결할 필요가 있다.
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker marker) {
@@ -138,9 +138,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public View getInfoContents(Marker marker) {
+                // 레이아웃 연결
                 @SuppressLint("InflateParams") View v = getLayoutInflater().inflate(R.layout.activity_marker, null);
+
+                // 객체 연결
                 TextView infoTitle = v.findViewById(R.id.infoTitle);
                 TextView info = v.findViewById(R.id.info);
+
+                // 데이터 바인딩
+                // FAKE_BOLD_TEXT_FLAG: 한글 문자는 이 Flag가 별도로 없으면 Bold처리가 안됨.
                 infoTitle.setText(marker.getTitle());
                 infoTitle.setPaintFlags(infoTitle.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
                 info.setText(marker.getSnippet());
@@ -148,31 +154,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return v;
             }
         });
+
+        // 마커 클릭으로 등장한 InfoWindow 클릭 시 DetailMapActivity로 연결하기 위한 이벤트 리스너 추가
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(MapsActivity.this, DetailMapActivity.class);
 
+                // 함께 넘길 데이터 취득 및 전달
                 PublicData data = find_xml_data(marker.getTitle());
-
                 intent.putExtra("publicData", data);
 
                 startActivity(intent);
             }
         });
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cityHall,15));
+        // 현재 위치로 카메라 이동
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MyPoint,15));
+
+        // 내 위치 표시 활성화
         mMap.setMyLocationEnabled(true);
+
+        // 내 위치 찾기 버튼 활성화
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
+        // 천안시 전역의 등록된 공공시설 마커 추가
+        // 서버 연동 시 별도 수신받은 데이터에 대해 지속적으로 반복될 예정임.
         if (arrayList != null) {
             Iterator<PublicData> iterator = arrayList.iterator();
             PublicData data;
             while(iterator.hasNext()) {
                 data = iterator.next();
+
+                // 거리 계산 테스트를 위한 코드. 앱 내 노출 x
                 double dist = calcDistance(gpsTracker.getLatitude(), gpsTracker.getLongitude(), data.getLatitude(), data.getLongitude());
                 Log.d("Iterator", String.format("onMapReady: 개방장소명: %s, %f M", data.getPlace(), dist));
 
+                // 앱 내 노출되는 부분
                 LatLng item_position = new LatLng(data.getLatitude(), data.getLongitude());
                 String description = data.getTel() + "\n평일: " + data.getWeekday() + "\n주말: " + data.getWeekend();
                 mMap.addMarker(new MarkerOptions().position(item_position).title(data.getFacility()).snippet(description));
@@ -231,6 +249,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // XML Parser
     private ArrayList<PublicData> xml_parse(@RawRes int id) {
         String TAG = "Parser";
         ArrayList<PublicData> publicDataList = new ArrayList<>();
@@ -339,6 +358,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return publicDataList;
     }
 
+    // DetailMapActivity로 넘기기 위한 클릭된 마커 정보 검색 함수
     private PublicData find_xml_data(String title) {
         for (PublicData data: arrayList) {
             if (data.getFacility().equals(title)) return data;
@@ -346,6 +366,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return null;
     }
+
+    // 거리 계산을 위한 함수들
+    // 추후 반경 계산시 사용될 것임.
     private double calcDistance(double origin_lat, double origin_lng, double diff_lat, double diff_lng) {
         double theta = origin_lng - diff_lng;
         double dist = Math.sin(deg2rad(origin_lat)) * Math.sin(deg2rad(diff_lat)) + Math.cos(deg2rad(origin_lat)) * Math.cos(deg2rad(diff_lat)) * Math.cos(deg2rad(theta));
