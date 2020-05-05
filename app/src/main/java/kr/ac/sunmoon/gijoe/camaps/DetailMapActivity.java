@@ -61,12 +61,12 @@ public class DetailMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void drawDescription() {
         TextView name = findViewById(R.id.detailNameValue);
-        TextView addr = findViewById(R.id.detailAddressValue);
+        TextView address = findViewById(R.id.detailAddressValue);
         TextView openTime = findViewById(R.id.detailOpenTimeValue);
         TextView closedTime = findViewById(R.id.detailClosedValue);
 
         name.setText(data.getFacility());
-        addr.setText(data.getAddress());
+        address.setText(data.getAddress());
         openTime.setText(String.format("평일: %s\n주말: %s", data.getWeekday(), data.getWeekend()));
         closedTime.setText(data.getClosed());
     }
