@@ -124,7 +124,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        // GPS Tracker로부터 수신
         LatLng MyPoint = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+
+        // 마커 클릭 시 나오는 InfoWindows 연결
+        // 안드로이드 기본 윈도우로는 줄내림 처리등의 미흡함이 있다.
+        // 따라서 해당 처리가 되어 있는 별도 레이아웃을 연결할 필요가 있다.
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
             public View getInfoWindow(Marker marker) {
@@ -133,9 +138,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public View getInfoContents(Marker marker) {
+                // 레이아웃 연결
                 @SuppressLint("InflateParams") View v = getLayoutInflater().inflate(R.layout.activity_marker, null);
+
+                // 객체 연결
                 TextView infoTitle = v.findViewById(R.id.infoTitle);
                 TextView info = v.findViewById(R.id.info);
+
+                // 데이터 바인딩
+                // FAKE_BOLD_TEXT_FLAG: 한글 문자는 이 Flag가 별도로 없으면 Bold처리가 안됨.
                 infoTitle.setText(marker.getTitle());
                 infoTitle.setPaintFlags(infoTitle.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
                 info.setText(marker.getSnippet());
@@ -143,31 +154,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return v;
             }
         });
+
+        // 마커 클릭으로 등장한 InfoWindow 클릭 시 DetailMapActivity로 연결하기 위한 이벤트 리스너 추가
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(MapsActivity.this, DetailMapActivity.class);
 
+                // 함께 넘길 데이터 취득 및 전달
                 PublicData data = find_xml_data(marker.getTitle());
-
                 intent.putExtra("publicData", data);
 
                 startActivity(intent);
             }
         });
 
+        // 현재 위치로 카메라 이동
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MyPoint,15));
+
+        // 내 위치 표시 활성화
         mMap.setMyLocationEnabled(true);
+
+        // 내 위치 찾기 버튼 활성화
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
+        // 천안시 전역의 등록된 공공시설 마커 추가
+        // 서버 연동 시 별도 수신받은 데이터에 대해 지속적으로 반복될 예정임.
         if (arrayList != null) {
             Iterator<PublicData> iterator = arrayList.iterator();
             PublicData data;
             while(iterator.hasNext()) {
                 data = iterator.next();
+
+                // 거리 계산 테스트를 위한 코드. 앱 내 노출 x
                 double dist = calcDistance(gpsTracker.getLatitude(), gpsTracker.getLongitude(), data.getLatitude(), data.getLongitude());
                 Log.d("Iterator", String.format("onMapReady: 개방장소명: %s, %f M", data.getPlace(), dist));
 
+                // 앱 내 노출되는 부분
                 LatLng item_position = new LatLng(data.getLatitude(), data.getLongitude());
                 String description = data.getTel() + "\n평일: " + data.getWeekday() + "\n주말: " + data.getWeekend();
                 mMap.addMarker(new MarkerOptions().position(item_position).title(data.getFacility()).snippet(description));
