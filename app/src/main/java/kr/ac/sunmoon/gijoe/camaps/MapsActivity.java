@@ -58,19 +58,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        // 필요 권한이 부여되었는지 확인.
+        // 권한 확인 과정에서 앱이 먼저 종료되는 버그가 있다.
+        // 권한 부여 후 다시 실행하면 문제 없지만 확인 필요함.
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
         }else {
             checkRunTimePermission();
         }
 
+        //GPS 수신 쓰레드 연결
         gpsTracker = new GpsTracker(MapsActivity.this);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // 구글 지도 및 콜백 연결
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         Objects.requireNonNull(mapFragment).getMapAsync(this);
 
+        // 테스트를 위해 내장된 xml 연결
         arrayList = xml_parse(R.raw.cheonan);
         Log.d("MapsActivity", "onCreate: Array Size: " + arrayList.size());
     }
@@ -114,21 +119,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        //LatLng cityHall = new LatLng(36.815226, 127.113886);
         LatLng cityHall = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -231,6 +226,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // XML Parser
     private ArrayList<PublicData> xml_parse(@RawRes int id) {
         String TAG = "Parser";
         ArrayList<PublicData> publicDataList = new ArrayList<>();
@@ -339,6 +335,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return publicDataList;
     }
 
+    // DetailMapActivity로 넘기기 위한 클릭된 마커 정보 검색 함수
     private PublicData find_xml_data(String title) {
         for (PublicData data: arrayList) {
             if (data.getFacility().equals(title)) return data;
@@ -346,6 +343,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return null;
     }
+
+    // 거리 계산을 위한 함수들
+    // 추후 반경 계산시 사용될 것임.
     private double calcDistance(double origin_lat, double origin_lng, double diff_lat, double diff_lng) {
         double theta = origin_lng - diff_lng;
         double dist = Math.sin(deg2rad(origin_lat)) * Math.sin(deg2rad(diff_lat)) + Math.cos(deg2rad(origin_lat)) * Math.cos(deg2rad(diff_lat)) * Math.cos(deg2rad(theta));
