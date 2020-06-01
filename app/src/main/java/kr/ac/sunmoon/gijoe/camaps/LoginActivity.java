@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
     Button loginBtn;
     EditText field_id;
     EditText field_pw;
+    TextView signupBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = findViewById(R.id.loginBtn);
         field_id = findViewById(R.id.field_id);
         field_pw = findViewById(R.id.field_pw);
+        signupBtn = findViewById(R.id.btnSignUp);
     }
 
     protected void SetListener()
@@ -35,6 +38,12 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 login(field_id.getText().toString(),field_pw.getText().toString());
+            }
+        });
+        signupBtn.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signup();
             }
         });
     }
@@ -47,6 +56,11 @@ public class LoginActivity extends AppCompatActivity {
 
     protected void loginSuccessed() {
         Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+    protected void signup() {
+        Intent intent = new Intent(LoginActivity.this, signupActivity.class);
         startActivity(intent);
     }
 }

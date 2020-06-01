@@ -12,6 +12,7 @@
     <string name="detailTvTimeLabel">개방시간</string>
     <string name="detailTvClosedLabel">폐관일</string>
     <string name="title_activity_detail_maps">Map</string>
+    <string name="baseUrl">http://202.31.147.236:28080/</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
