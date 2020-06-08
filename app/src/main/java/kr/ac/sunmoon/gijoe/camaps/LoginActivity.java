@@ -20,11 +20,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        initalizeView();
+        initializeView();
         SetListener();
     }
 
-    protected void initalizeView() {
+    protected void initializeView() {
         loginBtn = findViewById(R.id.loginBtn);
         field_id = findViewById(R.id.field_id);
         field_pw = findViewById(R.id.field_pw);
