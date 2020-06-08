@@ -2,7 +2,7 @@ package kr.ac.sunmoon.gijoe.camaps;
 
 import retrofit2.http.POST;
 
-public class authPost {
+public class SignupAPI {
     public Integer getId() {
         return id;
     }
@@ -40,7 +40,7 @@ public class authPost {
     private String nickname;
     private String accessToken;
 
-    public authPost(Integer id, String username, String nickname, String accessToken) {
+    public SignupAPI(Integer id, String username, String nickname, String accessToken) {
         this.id = id;
         this.username = username;
         this.nickname = nickname;
