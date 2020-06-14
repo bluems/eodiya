@@ -21,12 +21,19 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 public class signupActivity extends AppCompatActivity {
 
     private Button signupBtn;
     private EditText signupID;
     private EditText signupPW;
     private EditText signupNick;
+
+    private PostApi postApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,11 @@ public class signupActivity extends AppCompatActivity {
 
         initializeView();
         SetListener();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(getString(R.string.baseUrl))
+                .build();
+        postApi = retrofit.create(PostApi.class);
     }
 
     protected void initializeView() {
@@ -45,10 +57,32 @@ public class signupActivity extends AppCompatActivity {
     }
 
     protected void SetListener() {
-        signupBtn.setOnClickListener(v -> signup(signupID.getText().toString(), signupPW.getText().toString(), signupNick.getText().toString()));
+        signupBtn.setOnClickListener(v -> signup("1", "2", "3"));
     }
 
     private void signup(String username, String password, String nickname) {
+        Post post = new Post(username, password, nickname);
 
+        Call<Post> call = postApi.createPost(post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("API","code: "+response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+                Log.d("API","body: " + postResponse.getText());
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                Log.d("API", "Error: " + t.getMessage());
+            }
+        });
     }
 }
