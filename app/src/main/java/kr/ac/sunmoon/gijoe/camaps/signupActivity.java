@@ -45,13 +45,7 @@ public class signupActivity extends AppCompatActivity {
     }
 
     protected void SetListener() {
-        signupBtn.setOnClickListener(new Button.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                signup(signupID.getText().toString(), signupPW.getText().toString(), signupNick.getText().toString());
-            }
-        });
+        signupBtn.setOnClickListener(v -> signup(signupID.getText().toString(), signupPW.getText().toString(), signupNick.getText().toString()));
     }
 
     private void signup(String username, String password, String nickname) {
