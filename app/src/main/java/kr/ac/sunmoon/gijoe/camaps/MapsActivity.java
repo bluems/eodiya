@@ -15,10 +15,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private GpsTracker gpsTracker;
     private ArrayList<PublicData> arrayList;
+    private Button corona;
 
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
@@ -78,6 +81,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // 테스트를 위해 내장된 xml 연결
         arrayList = xml_parse(R.raw.cheonan);
         Log.d("MapsActivity", "onCreate: Array Size: " + arrayList.size());
+
+        corona = findViewById(R.id.corona_btn);
+
+        corona.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://coronamap.site/"));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
