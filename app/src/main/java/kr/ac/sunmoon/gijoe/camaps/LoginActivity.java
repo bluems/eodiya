@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -29,6 +30,9 @@ public class LoginActivity extends AppCompatActivity {
     EditText field_id;
     EditText field_pw;
     TextView signupBtn;
+
+    private int signupResult = 1;
+    private SignupData signupData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,20 +115,31 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(intent,signupResult);
     }
 
-    public void request() {
-        String url = getString(R.string.baseUrl) + "api/auth/signin";
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        JSONObject loginJson = new JSONObject();
-        try {
-            loginJson.put("username", field_id.getText().toString());
-            loginJson.put("password", field_pw.getText().toString());
+        if (resultCode == 0) {
+            easyToast("회원가입 성공. 로그인 절차 실행.");
 
-            String jsonString = loginJson.toString();
+            if (Objects.requireNonNull(data).hasExtra("data")) {
+                signupData = (SignupData) Objects.requireNonNull(data.getExtras()).get("data");
 
-            final RequestQueue requestQueue = Volley.newRequestQueue()
-            final JsonObjectRequest
-        } catch (JSONException e) {
-            e.printStackTrace();
+                if (signupData != null) {
+                    field_id.setText(signupData.getId());
+                }
+                if (signupData != null) {
+                    field_pw.setText(signupData.getPw());
+                }
+
+                if (signupData != null) {
+                    login(signupData.getId(), signupData.getPw());
+                }
+            }
         }
+    }
+
+    void easyToast(String str){
+        Toast.makeText(getApplicationContext(),str, Toast.LENGTH_SHORT).show();
     }
 }
