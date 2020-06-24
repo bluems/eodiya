@@ -56,6 +56,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
+    private LoginData userLoginData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }else {
             checkRunTimePermission();
         }
+
+        Intent intent = getIntent();
+        userLoginData = (LoginData) Objects.requireNonNull(intent.getExtras()).get("userData");
 
         //GPS 수신 쓰레드 연결
         gpsTracker = new GpsTracker(MapsActivity.this);
@@ -84,13 +89,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         corona = findViewById(R.id.corona_btn);
 
-        corona.setOnClickListener(new Button.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://coronamap.site/"));
-                startActivity(intent);
-            }
+        corona.setOnClickListener(v -> {
+            Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse("https://coronamap.site/"));
+            startActivity(intent1);
         });
     }
 
@@ -170,17 +171,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         // 마커 클릭으로 등장한 InfoWindow 클릭 시 DetailMapActivity로 연결하기 위한 이벤트 리스너 추가
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                Intent intent = new Intent(MapsActivity.this, DetailMapActivity.class);
+        mMap.setOnInfoWindowClickListener(marker -> {
+            Intent intent = new Intent(MapsActivity.this, DetailMapActivity.class);
 
-                // 함께 넘길 데이터 취득 및 전달
-                PublicData data = find_xml_data(marker.getTitle());
-                intent.putExtra("publicData", data);
+            // 함께 넘길 데이터 취득 및 전달
+            PublicData data = find_xml_data(marker.getTitle());
+            intent.putExtra("publicData", data);
 
-                startActivity(intent);
-            }
+            startActivity(intent);
         });
 
         // 현재 위치로 카메라 이동
@@ -219,20 +217,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.");
         builder.setCancelable(true);
-        builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                Intent callGPSSettingIntent
-                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
-            }
+        builder.setPositiveButton("설정", (dialog, id) -> {
+            Intent callGPSSettingIntent
+                    = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("취소", (dialog, id) -> dialog.cancel());
         builder.create().show();
     }
 
