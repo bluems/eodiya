@@ -2,29 +2,22 @@ package kr.ac.sunmoon.gijoe.camaps;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class signupActivity extends AppCompatActivity {
 
@@ -32,8 +25,6 @@ public class signupActivity extends AppCompatActivity {
     private EditText signupID;
     private EditText signupPW;
     private EditText signupNick;
-
-    private PostApi postApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
