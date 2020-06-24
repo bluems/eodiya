@@ -43,10 +43,10 @@ public class signupActivity extends AppCompatActivity {
         initializeView();
         SetListener();
 
-        Retrofit retrofit = new Retrofit.Builder()
+        /*Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getString(R.string.baseUrl))
                 .build();
-        postApi = retrofit.create(PostApi.class);
+        postApi = retrofit.create(PostApi.class);*/
     }
 
     protected void initializeView() {
@@ -61,7 +61,7 @@ public class signupActivity extends AppCompatActivity {
     }
 
     private void signup(String username, String password, String nickname) {
-        Post post = new Post(username, password, nickname);
+        /*Post post = new Post(username, password, nickname);
 
         Call<Post> call = postApi.createPost(post);
 
@@ -83,6 +83,8 @@ public class signupActivity extends AppCompatActivity {
             public void onFailure(Call<Post> call, Throwable t) {
                 Log.d("API", "Error: " + t.getMessage());
             }
-        });
+        });*/
+
+
     }
 }
