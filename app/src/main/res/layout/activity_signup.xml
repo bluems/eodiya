@@ -64,6 +64,11 @@
             android:textAlignment="center"
             tools:targetApi="O" />
 
+        <Spinner
+            android:id="@+id/find_q_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/callSignupBtn"
             android:layout_width="match_parent"
