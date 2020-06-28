@@ -13,6 +13,7 @@
     <string name="detailTvTimeLabel">개방시간</string>
     <string name="detailTvClosedLabel">폐관일</string>
     <string name="baseUrl">http://202.31.147.236:28080/</string>
+    <string name="corona">코로나 현황</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>
