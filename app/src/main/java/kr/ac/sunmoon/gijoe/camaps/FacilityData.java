@@ -6,8 +6,10 @@ public class FacilityData implements Serializable {
     private int facility_id;
     private String facility_name;
     private String closed;
+    private String weekday;
     private String weekday_start;
     private String weekday_end;
+    private String weekend;
     private String weekend_start;
     private String weekend_end;
     private String paid;
@@ -38,6 +40,9 @@ public class FacilityData implements Serializable {
         this.tel = tel;
         this.website = website;
         this.build_id = build_id;
+
+        this.weekday = this.weekday_start + "~" + this.weekday_end;
+        this.weekend = this.weekend_start + "~" + this.weekend_end;
     }
 
     public int getFacility_id() {
@@ -102,6 +107,14 @@ public class FacilityData implements Serializable {
 
     public int getBuild_id() {
         return build_id;
+    }
+
+    public String getWeekday() {
+        return weekday;
+    }
+
+    public String getWeekend() {
+        return weekend;
     }
 
 

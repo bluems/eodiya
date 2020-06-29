@@ -44,7 +44,7 @@ public class IntroActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if (msg.what == 1) {
-                Intent intent = new Intent(IntroActivity.this, LoginActivity.class);
+                Intent intent = new Intent(IntroActivity.this, MapsActivity.class);
 
                 // Flag를 추가로 뒤로가기 시 앱 종료률 유도함.
                 // 안드로이드는 액티비티간 전환 내역을 Task 라는 스택으로 관리함.

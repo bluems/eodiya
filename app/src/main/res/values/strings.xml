@@ -13,6 +13,9 @@
     <string name="detailTvTimeLabel">개방시간</string>
     <string name="detailTvClosedLabel">폐관일</string>
     <string name="baseUrl">http://202.31.147.236:28080/</string>
+    <string name="comment_button">전송</string>
+    <string name="preference_file_key">kr.ac.sunmoon.gijoe.camaps.secret</string>
+    <string name="secret">secret_key</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

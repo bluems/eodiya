@@ -80,7 +80,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         Intent intent = getIntent();
-        userLoginData = (LoginData) Objects.requireNonNull(intent.getExtras()).get("userData");
+        if (intent.hasExtra("userData"))
+            userLoginData = (LoginData) Objects.requireNonNull(intent.getExtras()).get("userData");
 
         //GPS 수신 쓰레드 연결
         gpsTracker = new GpsTracker(MapsActivity.this);
@@ -182,11 +183,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // 마커 클릭으로 등장한 InfoWindow 클릭 시 DetailMapActivity로 연결하기 위한 이벤트 리스너 추가
         mMap.setOnInfoWindowClickListener(marker -> {
+            String clickTitle = marker.getTitle();
+            LatLng clickPoint = marker.getPosition();
+            int clickBuildId = (int) marker.getTag();
+
+            String buildingUrl = getString(R.string.baseUrl) + "api/build/get";
+            JSONObject buildingJson = new JSONObject();
+
             Intent intent = new Intent(MapsActivity.this, DetailMapActivity.class);
 
             // 함께 넘길 데이터 취득 및 전달
             //PublicData data = find_xml_data(marker.getTitle());
             //intent.putExtra("publicData", data);
+            intent.putExtra("clickTitle", clickTitle);
+            intent.putExtra("clickPoint", clickPoint);
+            intent.putExtra("clickBuildId", clickBuildId);
 
             startActivity(intent);
         });
@@ -247,7 +258,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try {
                             final RequestQueue requestQueueFacility = Volley.newRequestQueue(MapsActivity.this);
                             //데이터 전달을 끝내고 이제 그 응답을 받을 차례입니다.
-//서버로 데이터 전달 및 응답 받기에 실패한 경우 아래 코드가 실행됩니다.
+                            //서버로 데이터 전달 및 응답 받기에 실패한 경우 아래 코드가 실행됩니다.
                             //Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
                             BuildingData finalBuildingData = buildingData;
                             final JsonObjectRequest jsonObjectRequestFacility = new JsonObjectRequest(Request.Method.GET, facilityUrl,facilityJson, responseFacility -> {
@@ -290,7 +301,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     Iterator<FacilityData> iteratorFacility = facilityDataList.iterator();
 
                                     FacilityData facilityData;
-                                    String description = "";
+                                    StringBuilder description = new StringBuilder();
 
                                     String min_week_start = "";
                                     String max_week_end = "";
@@ -300,22 +311,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                     while (iteratorFacility.hasNext()) {
                                         facilityData = iteratorFacility.next();
-                                        description += facilityData.getFacility_name()+"\n";
-                                        if (min_week_start.equals("")) facilityData.getWeekday_start();
-                                        if (max_week_end.equals("")) facilityData.getWeekday_end();
-                                        if (min_weekend_start.equals("")) facilityData.getWeekend_start();
-                                        if (max_weekend_end.equals("")) facilityData.getWeekend_end();
+                                        description.append(facilityData.getFacility_name()).append("\n");
 
-                                        String buf = "";
-                                        int splitedOrigin = Integer.valueOf(min_week_start.split(":")[0]);
-                                        int splitedNew = Integer.valueOf(facilityData.getWeekday_start().split(":")[0]);
+                                        if (min_week_start.equals("")) min_week_start = facilityData.getWeekday_start();
+                                        if (max_week_end.equals("")) max_week_end = facilityData.getWeekday_end();
+                                        if (min_weekend_start.equals("")) min_weekend_start = facilityData.getWeekend_start();
+                                        if (max_weekend_end.equals("")) max_weekend_end = facilityData.getWeekend_end();
 
+                                        int splitedOrigin = Integer.parseInt(min_week_start.split(":")[0]);
+                                        int splitedNew = Integer.parseInt(facilityData.getWeekday_start().split(":")[0]);
                                         if (splitedNew < splitedOrigin) min_week_start = facilityData.getWeekday_start();
+
+                                        splitedOrigin = Integer.parseInt(max_week_end.split(":")[0]);
+                                        splitedNew = Integer.parseInt(facilityData.getWeekday_end().split(":")[0]);
+                                        if (splitedNew > splitedOrigin) max_week_end = facilityData.getWeekday_end();
+
+                                        splitedOrigin = Integer.parseInt(min_weekend_start.split(":")[0]);
+                                        splitedNew = Integer.parseInt(facilityData.getWeekend_start().split(":")[0]);
+                                        if (splitedNew < splitedOrigin) min_weekend_start = facilityData.getWeekend_start();
+
+                                        splitedOrigin = Integer.parseInt(max_weekend_end.split(":")[0]);
+                                        splitedNew = Integer.parseInt(facilityData.getWeekend_end().split(":")[0]);
+                                        if (splitedNew > splitedOrigin) max_weekend_end = facilityData.getWeekend_end();
+
                                     }
-                                    description = description.substring(0, description.length()-1);
+
+                                    description.append("평일: " + min_week_start + "~" + max_week_end + "\n주말: " + min_weekend_start + "~" + max_weekend_end);
+                                    //description = new StringBuilder(description.substring(0, description.length() - 1));
 
                                     //description = "test";//data.getTel() + "\n평일: " + data.getWeekday() + "\n주말: " + data.getWeekend();
-                                    mMap.addMarker(new MarkerOptions().position(item_position).title(finalBuildingData.getBuild_name()).snippet(description));
+                                    mMap.addMarker(new MarkerOptions().position(item_position).title(finalBuildingData.getBuild_name()).snippet(description.toString())).setTag(finalBuildingData.getBuild_id());
 
                                 } catch (Exception e) {
                                     e.printStackTrace();

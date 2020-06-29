@@ -107,7 +107,9 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         LoginData data = new LoginData(id, token, nick);
         intent.putExtra("userData", data);
-        startActivity(intent);
+        setResult(RESULT_OK, intent);
+        //startActivity(intent);
+        finish();
     }
 
     protected void signup() {
