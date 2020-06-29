@@ -9,8 +9,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
@@ -24,6 +22,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,7 +35,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.w3c.dom.Text;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -49,7 +54,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private GpsTracker gpsTracker;
-    private ArrayList<PublicData> arrayList;
+    //private ArrayList<PublicData> arrayList;
+    private ArrayList<BuildingData> arrayBuildingList = new ArrayList<>();
+    private ArrayList<FacilityData> arrayFacilitiesList;
     private Button corona;
 
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -84,8 +91,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Objects.requireNonNull(mapFragment).getMapAsync(this);
 
         // 테스트를 위해 내장된 xml 연결
-        arrayList = xml_parse(R.raw.cheonan);
-        Log.d("MapsActivity", "onCreate: Array Size: " + arrayList.size());
+        //arrayList = xml_parse(R.raw.cheonan);
+        //Log.d("MapsActivity", "onCreate: Array Size: " + arrayList.size());
+
+        //getBuildingList();//arrayList 채워짐
+        //getFacilityList();
 
         corona = findViewById(R.id.corona_btn);
 
@@ -175,8 +185,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Intent intent = new Intent(MapsActivity.this, DetailMapActivity.class);
 
             // 함께 넘길 데이터 취득 및 전달
-            PublicData data = find_xml_data(marker.getTitle());
-            intent.putExtra("publicData", data);
+            //PublicData data = find_xml_data(marker.getTitle());
+            //intent.putExtra("publicData", data);
 
             startActivity(intent);
         });
@@ -192,22 +202,148 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // 천안시 전역의 등록된 공공시설 마커 추가
         // 서버 연동 시 별도 수신받은 데이터에 대해 지속적으로 반복될 예정임.
-        if (arrayList != null) {
-            Iterator<PublicData> iterator = arrayList.iterator();
-            PublicData data;
-            while(iterator.hasNext()) {
-                data = iterator.next();
 
-                // 거리 계산 테스트를 위한 코드. 앱 내 노출 x
-                double dist = calcDistance(gpsTracker.getLatitude(), gpsTracker.getLongitude(), data.getLatitude(), data.getLongitude());
-                Log.d("Iterator", String.format("onMapReady: 개방장소명: %s, %f M", data.getPlace(), dist));
+        String buildingUrl = getString(R.string.baseUrl) + "api/build/get";
+        JSONObject buildingJson = new JSONObject();
 
-                // 앱 내 노출되는 부분
-                LatLng item_position = new LatLng(data.getLatitude(), data.getLongitude());
-                String description = data.getTel() + "\n평일: " + data.getWeekday() + "\n주말: " + data.getWeekend();
-                mMap.addMarker(new MarkerOptions().position(item_position).title(data.getFacility()).snippet(description));
-            }
+        try {
+            final RequestQueue requestQueue = Volley.newRequestQueue(MapsActivity.this);
+            //데이터 전달을 끝내고 이제 그 응답을 받을 차례입니다.
+//서버로 데이터 전달 및 응답 받기에 실패한 경우 아래 코드가 실행됩니다.
+            //Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+
+            final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, buildingUrl,buildingJson, (JSONObject response) -> {
+                try {
+
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    JSONArray dataArray = jsonObject.getJSONArray("data");
+                    ArrayList<BuildingData> buildingDataList = new ArrayList<>();
+
+                    for (int i=0; i< dataArray.length(); i++) {
+                        JSONObject tmpObject = dataArray.getJSONObject(i);
+                        BuildingData tmpBuildingData = new BuildingData(
+                                tmpObject.getInt("build_id"),
+                                tmpObject.getString("build_name"),
+                                tmpObject.getDouble("latitude"),
+                                tmpObject.getDouble("longitude"),
+                                tmpObject.getString("address_street")
+                        );
+                        buildingDataList.add(tmpBuildingData);
+                    }
+
+                    //arrayBuildingList = buildingDataList;
+
+                    Iterator<BuildingData> iterator = buildingDataList.iterator();
+                    BuildingData buildingData;
+
+                    while(iterator.hasNext()) {
+                        buildingData = iterator.next();
+                        //ArrayList<FacilityData> facilityData = getFacilityofBuilding(data.getBuild_id());
+                        //Log.d("Iterator", String.format("onMapReady: 개방장소명: %s, %f M", data.getPlace(), dist));
+
+                        String facilityUrl = getString(R.string.baseUrl) + "api/facility/get/"+buildingData.getBuild_id();
+                        JSONObject facilityJson = new JSONObject();
+
+                        try {
+                            final RequestQueue requestQueueFacility = Volley.newRequestQueue(MapsActivity.this);
+                            //데이터 전달을 끝내고 이제 그 응답을 받을 차례입니다.
+//서버로 데이터 전달 및 응답 받기에 실패한 경우 아래 코드가 실행됩니다.
+                            //Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                            BuildingData finalBuildingData = buildingData;
+                            final JsonObjectRequest jsonObjectRequestFacility = new JsonObjectRequest(Request.Method.GET, facilityUrl,facilityJson, responseFacility -> {
+                                try {
+
+                                    //받은 json형식의 응답을 받아
+                                    JSONObject jsonObjectFacility = new JSONObject(responseFacility.toString());
+                                    JSONArray dataArrayFacility = jsonObjectFacility.getJSONArray("data");
+                                    ArrayList<FacilityData> facilityDataList = new ArrayList<>();
+
+                                    for (int i=0; i< dataArrayFacility.length(); i++) {
+                                        JSONObject tmpObject = dataArrayFacility.getJSONObject(i);
+                                        FacilityData tmpFacilityData = new FacilityData(
+                                                tmpObject.optInt("facility_id"),
+                                                tmpObject.optString("facility_name"),
+                                                tmpObject.optString("closed"),
+                                                tmpObject.optString("weekday_start"),
+                                                tmpObject.optString("weekday_end"),
+                                                tmpObject.optString("weekend_start"),
+                                                tmpObject.optString("weekend_end"),
+                                                tmpObject.optString("paid"),
+                                                tmpObject.optInt("paid_std_time"),
+                                                tmpObject.optInt("usage_fee"),
+                                                tmpObject.optInt("overtime_std"),
+                                                tmpObject.optInt("overtime_usage_fee"),
+                                                tmpObject.optString("application"),
+                                                tmpObject.optString("tel"),
+                                                tmpObject.optString("website"),
+                                                tmpObject.optInt("buildingBuildId")
+                                        );
+                                        facilityDataList.add(tmpFacilityData);
+                                    }
+
+                                    //arrayFacilitiesList = facilityDataList;
+                                    //Log.d("Build", jsonObject.toString());
+
+                                    // 앱 내 노출되는 부분
+                                    LatLng item_position = new LatLng(finalBuildingData.getLatitude(), finalBuildingData.getLongitude());
+
+                                    Iterator<FacilityData> iteratorFacility = facilityDataList.iterator();
+
+                                    FacilityData facilityData;
+                                    String description = "";
+
+                                    String min_week_start = "";
+                                    String max_week_end = "";
+                                    String min_weekend_start = "";
+                                    String max_weekend_end = "";
+
+
+                                    while (iteratorFacility.hasNext()) {
+                                        facilityData = iteratorFacility.next();
+                                        description += facilityData.getFacility_name()+"\n";
+                                        if (min_week_start.equals("")) facilityData.getWeekday_start();
+                                        if (max_week_end.equals("")) facilityData.getWeekday_end();
+                                        if (min_weekend_start.equals("")) facilityData.getWeekend_start();
+                                        if (max_weekend_end.equals("")) facilityData.getWeekend_end();
+
+                                        String buf = "";
+                                        int splitedOrigin = Integer.valueOf(min_week_start.split(":")[0]);
+                                        int splitedNew = Integer.valueOf(facilityData.getWeekday_start().split(":")[0]);
+
+                                        if (splitedNew < splitedOrigin) min_week_start = facilityData.getWeekday_start();
+                                    }
+                                    description = description.substring(0, description.length()-1);
+
+                                    //description = "test";//data.getTel() + "\n평일: " + data.getWeekday() + "\n주말: " + data.getWeekend();
+                                    mMap.addMarker(new MarkerOptions().position(item_position).title(finalBuildingData.getBuild_name()).snippet(description));
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }, Throwable::printStackTrace);
+                            jsonObjectRequestFacility.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                            requestQueueFacility.add(jsonObjectRequestFacility);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, Throwable::printStackTrace);
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            requestQueue.add(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
+
+
+
 
     }
 
@@ -253,6 +389,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+/*
     // XML Parser
     private ArrayList<PublicData> xml_parse(@RawRes int id) {
         String TAG = "Parser";
@@ -369,6 +506,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         return null;
+    }*/
+
+    private ArrayList<FacilityData> getFacilityofBuilding(int building) {
+        ArrayList<FacilityData> arrayList = new ArrayList<>();
+
+        for(int i=0; i< arrayFacilitiesList.size(); i++ ) {
+            if (arrayFacilitiesList.get(i).getBuild_id() == building)
+                arrayList.add(arrayFacilitiesList.get(i));
+        }
+
+        return arrayList;
     }
 
     // 거리 계산을 위한 함수들

@@ -7,9 +7,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.content.Intent;
+import android.util.Log;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 // 인트로 뷰를 위한 액티비티
 public class IntroActivity extends AppCompatActivity {
+    private ArrayList<BuildingData> arrayBuildingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +33,9 @@ public class IntroActivity extends AppCompatActivity {
         //IntroThread 에 핸들러를 넘기고 쓰레드 시작.
         IntroThread introThread = new IntroThread(handler);
         introThread.start();
+
+
+
     }
 
     // 쓰레드에 넘길 핸들러
