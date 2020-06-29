@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/comment_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/comment_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autofillHints=""
+        android:ems="10"
+        android:gravity="start|top"
+        android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/btn_comment_send"
+        android:layout_width="5dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="@dimen/cardview_compat_inset_shadow"
+        android:layout_weight="1"
+        android:minWidth="50dip"
+        android:text="@string/comment_button" />
+</LinearLayout>

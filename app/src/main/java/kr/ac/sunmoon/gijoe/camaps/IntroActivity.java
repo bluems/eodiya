@@ -7,9 +7,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.content.Intent;
+import android.util.Log;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 // 인트로 뷰를 위한 액티비티
 public class IntroActivity extends AppCompatActivity {
+    private ArrayList<BuildingData> arrayBuildingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +33,9 @@ public class IntroActivity extends AppCompatActivity {
         //IntroThread 에 핸들러를 넘기고 쓰레드 시작.
         IntroThread introThread = new IntroThread(handler);
         introThread.start();
+
+
+
     }
 
     // 쓰레드에 넘길 핸들러
@@ -27,7 +44,7 @@ public class IntroActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             if (msg.what == 1) {
-                Intent intent = new Intent(IntroActivity.this, LoginActivity.class);
+                Intent intent = new Intent(IntroActivity.this, MapsActivity.class);
 
                 // Flag를 추가로 뒤로가기 시 앱 종료률 유도함.
                 // 안드로이드는 액티비티간 전환 내역을 Task 라는 스택으로 관리함.
