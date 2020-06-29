@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private GpsTracker gpsTracker;
+
     //private ArrayList<PublicData> arrayList;
     private ArrayList<BuildingData> arrayBuildingList = new ArrayList<>();
     private ArrayList<FacilityData> arrayFacilitiesList;

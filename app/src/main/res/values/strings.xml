@@ -19,6 +19,7 @@
     <string name="website">웹 사이트</string>
     <string name="pay">요금</string>
     <string name="tel">전화번호</string>
+    <string name="corona">코로나 현황</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

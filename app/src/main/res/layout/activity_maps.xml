@@ -11,12 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />
-tee
-    <Button
+
+    <ImageButton
         android:id="@+id/corona_btn"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="right|bottom"
-        android:text="코로나 현황"
+        android:contentDescription="@string/corona"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_corona"
         tools:ignore="RtlHardcoded" />
 </FrameLayout>
