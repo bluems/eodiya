@@ -1,110 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".DetailMapActivity">
-
-    <fragment
-        android:id="@+id/detailMap"
-        class="com.google.android.gms.maps.MapFragment"
+    >
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_margin="20dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".DetailMapActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TableLayout
-            android:id="@+id/detailDescTable"
+        <fragment
+            android:id="@+id/detailMap"
+            class="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="200dp"
+            android:layout_margin="20dp" />
 
-            <TableRow
-                android:id="@+id/detailName"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        <ListView
+            android:id="@+id/detailListView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp">
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detailTvNameLabel"
-                    android:textSize="18sp" />
+        </ListView>
 
-                <TextView
-                    android:id="@+id/detailNameValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="18sp" />
-            </TableRow>
+        <ListView
+            android:id="@+id/detailCommentView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp">
 
-            <TableRow
-                android:id="@+id/detailAddress"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        </ListView>
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detailTvAddressLabel"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/detailAddressValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="18sp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/detailOpenTime"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detailTvTimeLabel"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/detailOpenTimeValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="18sp" />
-            </TableRow>
-
-            <TableRow
-                android:id="@+id/detailClosed"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/detailTvClosedLabel"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/detailClosedValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="18sp" />
-            </TableRow>
-
-        </TableLayout>
-    </ScrollView>
-
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/add_comment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        ></LinearLayout>
+</RelativeLayout>
